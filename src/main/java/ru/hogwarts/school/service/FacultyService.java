@@ -21,7 +21,7 @@ public class FacultyService {
     }
 
     public Faculty getFacultyId(long id) {
-        return facultyRepository.findById(id).get();
+        return facultyRepository.findById(id).orElseThrow(() -> new RuntimeException("can not find faculty by id = " + id));
     }
 
     public Faculty updateFaculty(Faculty faculty) {
@@ -38,6 +38,10 @@ public class FacultyService {
 
     public List<Faculty> sortedColorFaculty(String color) {
         return facultyRepository.findByColorLike(color);
+    }
+
+    public List<Faculty> findFacultyByNameOrColor(String value) {
+        return facultyRepository.findByNameIgnoreCaseContainingOrColorIgnoreCaseContaining(value, value);
     }
 
 }

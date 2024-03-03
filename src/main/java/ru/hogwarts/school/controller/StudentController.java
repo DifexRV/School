@@ -27,6 +27,10 @@ public class StudentController {
         return ResponseEntity.ok(studentService.sortedAgeStudent(age));
     }
 
+    @GetMapping("/students")
+    public ResponseEntity<?> getStudentsByAgeRange(@RequestParam int minAge, @RequestParam int maxAge) {
+        return ResponseEntity.ok(studentService.sortedAgeStudentBetween(minAge, maxAge));
+    }
 
     @PostMapping
     public ResponseEntity<Student> createStudent(@RequestBody Student student) {
@@ -56,9 +60,16 @@ public class StudentController {
     public ResponseEntity deleteStudent(@PathVariable Long id) {
         studentService.deleteStudent(id);
         return ResponseEntity.ok().build();
-
     }
 
+    @GetMapping("/{studentId}/faculty")
+    public ResponseEntity<?> getStudentFaculty(@PathVariable Long studentId) {
+        Student student = studentService.getStudentId(studentId);
+        if(student == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(student.getFaculty());
+    }
 
 }
 
