@@ -23,7 +23,7 @@ public class FacultyController {
         return ResponseEntity.ok(facultyService.getAllFaculty());
     }
 
-    @GetMapping(path = "{color}")
+    @GetMapping(path = "{color}/sortedAgeStudent")
     public ResponseEntity<?> sortedAgeStudent(@PathVariable String color) {
         return ResponseEntity.ok(facultyService.sortedColorFaculty(color));
     }
