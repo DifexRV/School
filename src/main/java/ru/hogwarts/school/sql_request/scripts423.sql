@@ -1,11 +1,11 @@
 SELECT s.name AS student_name, s.age, f.name AS faculty_name
-FROM students s
-         JOIN faculties f ON s.faculty_id = f.id
-WHERE s.faculty_id = (SELECT id FROM faculty WHERE name = 'Hogwarts');
+FROM student s
+         LEFT JOIN faculty f ON s.faculty_id = f.id;
 
 
 SELECT s.name AS student_name, s.age, f.name AS faculty_name
-FROM students s
-         JOIN faculties f ON s.faculty_id = f.id
-         JOIN avatars a ON s.id = a.student_id
-WHERE s.faculty_id = (SELECT id FROM faculty WHERE name = 'Hogwarts');
+FROM student s
+         INNER JOIN faculty f on s.faculty_id = f.id
+         INNER JOIN avatar a ON s.id = a.student_id;
+
+

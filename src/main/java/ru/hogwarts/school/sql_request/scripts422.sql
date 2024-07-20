@@ -1,4 +1,4 @@
-CREATE TABLE People
+CREATE TABLE people
 (
     person_id   INTEGER PRIMARY KEY,
     name        text,
@@ -6,7 +6,7 @@ CREATE TABLE People
     has_license Boolean
 );
 
-CREATE TABLE Cars
+CREATE TABLE cars
 (
     car_id INTEGER PRIMARY KEY,
     brand  text,
@@ -14,16 +14,16 @@ CREATE TABLE Cars
     price  NUMERIC
 );
 
-CREATE TABLE People_Car
+CREATE TABLE people_Car
 (
     person_id INTEGER,
     car_id    INTEGER,
     PRIMARY KEY (person_id, car_id),
-    foreign key (person_id) REFERENCES People (person_id),
-    foreign key (car_id) references Cars (car_id)
+    foreign key (person_id) REFERENCES people (person_id),
+    foreign key (car_id) references cars (car_id)
 );
 
-select People.person_id, People.name, People.age, People.has_license
-FROM People_Car
-         INNER JOIN People ON People_Car.person_id = People.person_id
-         INNER JOIN Cars ON Cars.car_id = People_Car.car_id
+select people.person_id, people.name, people.age, people.has_license
+FROM people_Car
+         INNER JOIN people ON people_Car.person_id = people.person_id
+         INNER JOIN cars ON cars.car_id = people_Car.car_id
