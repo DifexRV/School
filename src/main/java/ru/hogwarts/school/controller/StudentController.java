@@ -89,5 +89,11 @@ public class StudentController {
         return studentService.findLastFiveStudent();
     }
 
+    @GetMapping("/name/{name}")
+    public ResponseEntity<List<Student>> getStudentByName(@PathVariable String name) {
+        List<Student> student = studentService.getStudentByName(name);
+        return ResponseEntity.ok(student);
+    }
+
 }
 
