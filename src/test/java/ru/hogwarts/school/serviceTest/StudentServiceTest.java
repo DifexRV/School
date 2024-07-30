@@ -7,7 +7,9 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.hogwarts.school.model.Student;
+import ru.hogwarts.school.repositories.FacultyRepository;
 import ru.hogwarts.school.repositories.StudentRepository;
+import ru.hogwarts.school.service.FacultyService;
 import ru.hogwarts.school.service.StudentService;
 
 import java.util.ArrayList;
@@ -22,12 +24,13 @@ public class StudentServiceTest {
 
     @Mock
     private StudentRepository studentRepository;
-
     private StudentService studentService;
+    private FacultyService facultyService;
 
     @BeforeEach
     public void setup() {
-        studentService = new StudentService(studentRepository);
+        studentService = new StudentService(studentRepository, (FacultyRepository) facultyService);
+
     }
 
     @Test

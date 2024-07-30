@@ -67,13 +67,13 @@ public class FacultyController {
     @GetMapping("/{facultyId}/students")
     public ResponseEntity<?> getFacultyStudents(@PathVariable Long facultyId) {
         Faculty faculty = facultyService.getFacultyId(facultyId);
-        if(faculty == null) {
+        if (faculty == null) {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(faculty.getStudents());
     }
 
-    @GetMapping("/nameAndColor/name/{name}/color/{color}")
+    @GetMapping("/name/{name}/color/{color}")
     public ResponseEntity<List<Faculty>> getFacultyByNameAndColor(@PathVariable String name, @PathVariable String color) {
         List<Faculty> faculty = facultyService.getFacultyByNameAndColor(name, color);
         return ResponseEntity.ok(faculty);
