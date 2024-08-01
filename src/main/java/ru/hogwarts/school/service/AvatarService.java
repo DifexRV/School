@@ -1,6 +1,8 @@
 package ru.hogwarts.school.service;
 
 import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -24,6 +26,8 @@ import static java.nio.file.StandardOpenOption.CREATE_NEW;
 @Transactional
 public class AvatarService {
 
+    private final Logger logger = LoggerFactory.getLogger(AvatarService.class);
+
     @Value("${avatars.dir.path}")
     private String avatarsDir;
     private final AvatarRepository avatarRepository;
@@ -36,10 +40,12 @@ public class AvatarService {
 
 
     public Avatar findAvatar(long studentId) {
+        logger.debug("The method to find the student's avatar was called: {}", studentId);
         return avatarRepository.findByStudentId(studentId).orElse(new Avatar());
     }
 
     public void uploadAvatar(Long studentId, MultipartFile file) throws IOException {
+        logger.debug("Method called to change student avatar - {}, photo - {}", studentId, file);
         Student student = studentService.getStudentId(studentId);
 
         Path filePath = Path.of(avatarsDir, studentId + "." + getExtension(file.getOriginalFilename()));
@@ -61,13 +67,14 @@ public class AvatarService {
         avatar.setMediaType(file.getContentType());
         avatar.setPreview(generateImageData(filePath));
         avatarRepository.save(avatar);
+        logger.info("Avatar uploaded successfully for student {}", studentId);
     }
 
     private byte[] generateImageData(Path filePath) throws IOException {
         try (
-            InputStream is = Files.newInputStream(filePath);
-            BufferedInputStream bis = new BufferedInputStream(is, 1024);
-            ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+                InputStream is = Files.newInputStream(filePath);
+                BufferedInputStream bis = new BufferedInputStream(is, 1024);
+                ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
             BufferedImage image = ImageIO.read(bis);
 
             int height = image.getHeight() / (image.getWidth() / 100);
@@ -78,6 +85,9 @@ public class AvatarService {
 
             ImageIO.write(preview, getExtension(filePath.getFileName().toString()), baos);
             return baos.toByteArray();
+        } catch (IOException e) {
+            logger.error("An error occurred while generating an image data: {}", filePath.toAbsolutePath().toString());
+            throw e;
         }
 
     }
@@ -87,12 +97,15 @@ public class AvatarService {
     }
 
     public List<byte[]> getAllAvatars(Integer pageNumber, Integer pageSize) {
+        logger.info("Retrieving avatars for page {} with size {}", pageNumber, pageSize);
         PageRequest pageRequest = PageRequest.of(pageNumber, pageSize);
         List<Avatar> avatars = avatarRepository.findAll(pageRequest).getContent();
+        logger.debug("Found {} avatars", avatars.size());
         List<byte[]> avatarsImages = new ArrayList<>();
         for (Avatar avatar : avatars) {
             avatarsImages.add(avatar.getPreview());
         }
+        logger.info("Retrieved {} avatars images", avatarsImages.size());
         return avatarsImages;
     }
 
