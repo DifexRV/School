@@ -9,9 +9,12 @@ import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repositories.FacultyRepository;
 import ru.hogwarts.school.repositories.StudentRepository;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Collection;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 @Service
 public class StudentService {
@@ -94,6 +97,31 @@ public class StudentService {
     public List<Student> getStudentByName(String name) {
         logger.info("The method to find students by name was called: {}", studentRepository.getStudentByName(name));
         return studentRepository.getStudentByName(name);
+    }
+
+    public List<String> findStudentByHalfName(String symbol) {
+        logger.debug("The method for searching for a student by letter is called: {}", symbol);
+        return studentRepository.findAll()
+                .stream()
+                .parallel()
+                .map(Student::getName)
+                .map(String::toUpperCase)
+                .filter(name -> name.toUpperCase().startsWith(symbol.toUpperCase()))
+                .sorted()
+                .collect(Collectors.toList());
+    }
+
+    public double findStudentAvgAge() {
+        logger.info("The method was designed to indicate the average age (via stream) of students: {}", studentRepository.ageAVG());
+        return BigDecimal.valueOf(studentRepository.findAll()
+                        .stream()
+                        .parallel()
+                        .mapToInt(Student::getAge)
+                        .average()
+                        .orElse(0.0))
+                .setScale(2, RoundingMode.HALF_UP)
+                .doubleValue();
+
     }
 
 }

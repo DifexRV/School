@@ -1,5 +1,6 @@
 package ru.hogwarts.school.controller;
 
+import org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfiguration;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.hogwarts.school.model.Student;
@@ -13,9 +14,11 @@ import java.util.List;
 public class StudentController {
 
     private final StudentService studentService;
+    private final RestTemplateAutoConfiguration restTemplateAutoConfiguration;
 
-    public StudentController(StudentService studentService) {
+    public StudentController(StudentService studentService, RestTemplateAutoConfiguration restTemplateAutoConfiguration) {
         this.studentService = studentService;
+        this.restTemplateAutoConfiguration = restTemplateAutoConfiguration;
     }
 
     @GetMapping
@@ -94,6 +97,20 @@ public class StudentController {
         List<Student> student = studentService.getStudentByName(name);
         return ResponseEntity.ok(student);
     }
+
+    @GetMapping("/find_name/{symbol}")
+    public ResponseEntity<List<String>> findStudentByHalfName(@PathVariable String symbol) {
+        List<String> student = studentService.findStudentByHalfName(symbol);
+        return ResponseEntity.ok(student);
+    }
+
+    @GetMapping("/find_AVG_age")
+        public ResponseEntity<?> findStudentAvgAge() {
+            double avg = studentService.findStudentAvgAge();
+            return ResponseEntity.ok(avg);
+        }
+
+
 
 }
 
