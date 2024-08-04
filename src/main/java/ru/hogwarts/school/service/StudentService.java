@@ -11,6 +11,7 @@ import ru.hogwarts.school.repositories.StudentRepository;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Random;
@@ -103,7 +104,6 @@ public class StudentService {
         logger.debug("The method for searching for a student by letter is called: {}", symbol);
         return studentRepository.findAll()
                 .stream()
-                .parallel()
                 .map(Student::getName)
                 .map(String::toUpperCase)
                 .filter(name -> name.toUpperCase().startsWith(symbol.toUpperCase()))
@@ -115,12 +115,91 @@ public class StudentService {
         logger.info("The method was designed to indicate the average age (via stream) of students: {}", studentRepository.ageAVG());
         return BigDecimal.valueOf(studentRepository.findAll()
                         .stream()
-                        .parallel()
                         .mapToInt(Student::getAge)
                         .average()
                         .orElse(0.0))
                 .setScale(2, RoundingMode.HALF_UP)
                 .doubleValue();
+    }
+
+    public List<String> printStudent() {
+
+        List<String> students = studentRepository.findAll().stream().map(Student::getName).sorted().toList();
+
+        List<String> processedStudents = new ArrayList<>();
+        processedStudents.add(students.get(0));
+        processedStudents.add(students.get(1));
+        processedStudents.add(students.get(2));
+        processedStudents.add(students.get(3));
+        processedStudents.add(students.get(4));
+        processedStudents.add(students.get(5));
+
+        System.out.println(processedStudents.get(0));
+        System.out.println(students.get(1));
+
+        Thread thread1 = new Thread(() -> {
+            System.out.println(students.get(2));
+            System.out.println(students.get(3));
+        });
+
+        Thread thread2 = new Thread(() -> {
+            System.out.println(students.get(4));
+            System.out.println(students.get(5));
+        });
+
+        thread1.start();
+        thread2.start();
+
+        try {
+            thread1.join();
+            thread2.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return processedStudents;
+    }
+
+    public List<String> printStudentSynchronized() {
+
+        List<String> students = studentRepository.findAll().stream().map(Student::getName).sorted().toList();
+
+        List<String> processedStudents = new ArrayList<>();
+        processedStudents.add(students.get(0));
+        processedStudents.add(students.get(1));
+        processedStudents.add(students.get(2));
+        processedStudents.add(students.get(3));
+        processedStudents.add(students.get(4));
+        processedStudents.add(students.get(5));
+
+        System.out.println(processedStudents.get(0));
+        System.out.println(processedStudents.get(1));
+
+        Thread thread1 = new Thread(() -> {
+            synchronized (processedStudents) {
+                System.out.println(processedStudents.get(2));
+                System.out.println(processedStudents.get(3));
+            }
+        });
+
+        Thread thread2 = new Thread(() -> {
+            synchronized (processedStudents) {
+                System.out.println(processedStudents.get(4));
+                System.out.println(processedStudents.get(5));
+            }
+        });
+
+        thread1.start();
+        thread2.start();
+
+        try {
+            thread1.join();
+            thread2.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return processedStudents;
 
     }
 
