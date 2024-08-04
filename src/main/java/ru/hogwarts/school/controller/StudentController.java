@@ -10,7 +10,7 @@ import java.util.Collection;
 import java.util.List;
 
 @RestController
-@RequestMapping("student")
+@RequestMapping("/students")
 public class StudentController {
 
     private final StudentService studentService;
@@ -98,19 +98,29 @@ public class StudentController {
         return ResponseEntity.ok(student);
     }
 
-    @GetMapping("/find_name/{symbol}")
-    public ResponseEntity<List<String>> findStudentByHalfName(@PathVariable String symbol) {
+    @GetMapping("/find_name")
+    public ResponseEntity<List<String>> findStudentByHalfName(@RequestParam(required = false) String symbol) {
         List<String> student = studentService.findStudentByHalfName(symbol);
         return ResponseEntity.ok(student);
     }
 
     @GetMapping("/find_AVG_age")
-        public ResponseEntity<?> findStudentAvgAge() {
-            double avg = studentService.findStudentAvgAge();
-            return ResponseEntity.ok(avg);
-        }
+    public ResponseEntity<?> findStudentAvgAge() {
+        double avg = studentService.findStudentAvgAge();
+        return ResponseEntity.ok(avg);
+    }
 
+    @GetMapping("/print-parallel")
+    public ResponseEntity<?> printStudent() {
+        List<String> students = studentService.printStudent();
+        return ResponseEntity.ok(students);
+    }
 
+    @GetMapping("/print-synchronized")
+    public ResponseEntity<?> printStudentSynchronized() {
+        List<String> students = studentService.printStudentSynchronized();
+        return ResponseEntity.ok(students);
+    }
 
 }
 
